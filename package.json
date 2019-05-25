@@ -13,5 +13,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "node-red"     : {
+    "nodes": {
+        "NexxGarage": "nexx-garage.js"
+    }
+  }
 }
