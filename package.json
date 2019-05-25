@@ -1,9 +1,11 @@
 {
   "name": "node-red-contrib-nexx-garage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple node that listens for when an Amazon Dash button is pressed.",
   "main": "nexx-garage.js",
-  "keywords": [ "node-red" ],
+  "keywords": [
+    "node-red"
+  ],
   "dependencies": {
     "nexx-garage-sdk": "^1.0.0"
   },
