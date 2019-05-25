@@ -1,0 +1,119 @@
+<script type="text/javascript">
+  RED.nodes.registerType('NexxGarage',{
+      category: 'input',
+      color: '#F3EC14',
+      defaults: {
+        username: {value:""},
+        password: {value:""},
+        deviceId: {value:""},
+        clientId: {value:""},
+        deviceToken: {value:""},
+        deviceName: {value:""}
+      },
+      inputs:1,
+      outputs:1,
+      icon: "bridge.png",
+      label: function() {
+          return this.name||"Nexx Garage";
+      },
+      paletteLabel: "Nexx Garage",
+      oneditprepare: () => {
+        
+        let username, password;
+        $('#node-input-username').on('change', (e) => {
+          username = e.target.value;
+        });
+        $('#node-input-password').on('change', (e) => {
+          password = e.target.value;
+        });
+        $('#node-input-deviceId').on('change', (e) => {
+          const options = e.target.options || [];
+          const selectedOption = options[e.target.selectedIndex] || {};
+          const name = selectedOption.text;
+          // if we have a name and it is different
+          if (name && $('#node-input-deviceName')[0].value !== name) {
+            $('#node-input-deviceName')[0].value = name;
+          }
+          
+        })
+
+        $('#node-nexx-garage-get-devices').on('click', () => {
+          console.log({ username, password });
+          $.ajax({
+            beforeSend: function(request) {
+              request.setRequestHeader(
+                'Authorization', 
+                'Basic ' + btoa(unescape(encodeURIComponent(
+                  username + ':' + password
+                )))
+              );
+            },
+            dataType: "json",
+            url: '/NexxGarage/devices',
+            success: function(devices) {
+              if (!devices) {
+                $('#node-nexx-garage-get-devices-error')
+                  .html = 'Error gettting devices';
+                return;
+              }
+
+              const keys = Object.keys(devices);
+              console.log(devices);
+              keys.forEach((key) => {
+                const device = devices[key];
+                $('#node-input-deviceId')
+                  .append(`<option value=${device.DeviceId}>${device.DeviceNickName}</option>`);
+              });
+              $('#nexx-garage-device-parent').show();
+            }
+          });
+
+        });
+      }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="NexxGarage">
+  <div class="form-row">
+      <label for="node-input-username"><i class="icon-tag"></i>Username</label>
+      <input type="text" id="node-input-username" placeholder="Username">
+  </div>
+
+  <div class="form-row">
+      <label for="node-input-password">Password</label>
+      <input type="password" id="node-input-password" placeholder="password">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-clientId">Client ID</label>
+    <input type="text" id="node-input-clientId" placeholder="client_id">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-deviceToken">Device Token</label>
+    <input type="text" id="node-input-deviceToken" placeholder="device_token">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-deviceName">Device Name</label>
+    <input type="text" id="node-input-deviceName" disabled placeholder="Name">
+  </div>
+
+
+  <div class="form-row">
+    <button id="node-nexx-garage-get-devices">Get Devices</button>
+    <span id="node-nexx-garage-get-devices-error"></span>
+  </div>
+  <div class="form-row" id="nexx-garage-device-parent">
+      <label for="node-input-deviceId">Device</label>
+      <select type="text" id="node-input-deviceId">
+        <option>Log in to see devices</option>
+      </select>
+  </div>  
+</script>
+<script type="text/x-red" data-description-name="NexxGarage">
+  <p>Configure the node with the Dash Button MAC Address</p>
+</script>
+<script type="text/x-red" data-help-name="NexxGarage">
+  <p>Configure the node with the Dash Button MAC Address</p>
+</script>
