@@ -6,7 +6,6 @@ module.exports = function(RED) {
       
     RED.nodes.createNode(this, config);
     const node = this;
-    node.send({ payload: config });
     client = new NexxApiClient(config);
 
     if (process.env.NODE_ENV === 'development') {
